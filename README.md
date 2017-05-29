@@ -19,7 +19,7 @@ This is just a small example of what Restructure can do. Check out the API docum
 below for more information.
 
 ```lua
-local r = require('restructure');
+local r = require('restructure')
 
 local Person = r.Struct.new({
   { name = r.String.new(r.uint8, 'utf8') },
@@ -27,7 +27,7 @@ local Person = r.Struct.new({
 })
 
 -- decode a person from a buffer
-local stream = r.DecodeStream.new(buffer);
+local stream = r.DecodeStream.new(buffer)
 Person.decode(stream) -- returns an object with the fields defined above
 
 -- encode a person from an object
@@ -40,7 +40,7 @@ Person.encode(stream, {
   age = 21
 });
 
-stream.end();
+stream.end()
 ```
 
 
