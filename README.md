@@ -1,7 +1,9 @@
-# Restructure
+# luarestructure
 
-[![Build Status](https://travis-ci.org/devongovett/restructure.svg?branch=master)](https://travis-ci.org/devongovett/restructure)
-[![Coverage Status](https://coveralls.io/repos/devongovett/restructure/badge.png?branch=master)](https://coveralls.io/r/devongovett/restructure?branch=master)
+luarestructure is a nearly line-by-line port of [restructure] (including this README)
+from Javascript to Lua.
+
+[restructure](https://github.com/devongovett/restructure)
 
 Restructure allows you to declaratively encode and decode binary data.
 It supports a wide variety of types to enable you to express a multitude
@@ -16,26 +18,26 @@ bitfields, and more.  See the documentation below for more details.
 This is just a small example of what Restructure can do. Check out the API documentation
 below for more information.
 
-```javascript
-var r = require('restructure');
+```lua
+local r = require('restructure');
 
-var Person = new r.Struct({
-  name: new r.String(r.uint8, 'utf8'),
-  age: r.uint8
-});
+local Person = r.Struct.new({
+  { name = r.String.new(r.uint8, 'utf8') },
+  { age = r.uint8 }
+})
 
-// decode a person from a buffer
-var stream = new r.DecodeStream(buffer);
-Person.decode(stream); // returns an object with the fields defined above
+-- decode a person from a buffer
+local stream = r.DecodeStream.new(buffer);
+Person.decode(stream) -- returns an object with the fields defined above
 
-// encode a person from an object
-// pipe the stream to a destination, such as a file
-var stream = new r.EncodeStream();
-stream.pipe(fs.createWriteStream('out.bin'));
+-- encode a person from an object
+-- pipe the stream to a destination, such as a file
+local stream = r.EncodeStream.new()
+stream.pipe(io.open('out.bin', 'w'))
 
 Person.encode(stream, {
-  name: 'Devon',
-  age: 21
+  name = 'Devon',
+  age = 21
 });
 
 stream.end();
@@ -210,8 +212,8 @@ var arr = new r.Array(r.uint16, 6, 'bytes');
 
 ### LazyArray
 
-The `LazyArray` type extends from the `Array` type, and is useful for large arrays that you do not need to access sequentially. 
-It avoids decoding the entire array upfront, and instead only decodes and caches individual items as needed. It only works when 
+The `LazyArray` type extends from the `Array` type, and is useful for large arrays that you do not need to access sequentially.
+It avoids decoding the entire array upfront, and instead only decodes and caches individual items as needed. It only works when
 the elements inside the array have a fixed size.
 
 Instead of returning a JavaScript array, the `LazyArray` type returns a custom object that can be used to access the elements.
@@ -265,7 +267,7 @@ var Person = new r.VersionedStruct(r.uint8, {
 ### Pointer
 
 Pointers map an address or offset encoded as a number, to a value encoded elsewhere in the buffer.
-There are a few options you can use: `type`, `relativeTo`, `allowNull`, and `nullValue`. 
+There are a few options you can use: `type`, `relativeTo`, `allowNull`, and `nullValue`.
 The `type` option has these possible values:
 
 * `local` (default) - the encoded offset is relative to the start of the containing structure
