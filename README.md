@@ -38,7 +38,7 @@ stream.pipe(io.open('out.bin', 'w'))
 Person.encode(stream, {
   name = 'Devon',
   age = 21
-});
+})
 
 stream.end()
 ```
