@@ -3,7 +3,7 @@
 luarestructure is a nearly line-by-line port of [restructure] (including this README)
 from Javascript to Lua.
 
-[restructure](https://github.com/devongovett/restructure)
+[restructure]: https://github.com/devongovett/restructure
 
 Restructure allows you to declaratively encode and decode binary data.
 It supports a wide variety of types to enable you to express a multitude
