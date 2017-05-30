@@ -2,6 +2,6 @@ spec:
 	busted .
 
 lint:
-	luacheck src
+	luacheck src test
 
 .PHONY: lint spec
