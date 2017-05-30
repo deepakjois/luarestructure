@@ -1,0 +1,1 @@
+local EncodeStream = require("restructure").EncodeStream

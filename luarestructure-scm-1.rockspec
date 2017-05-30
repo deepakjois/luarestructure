@@ -16,5 +16,10 @@ dependencies = {
 }
 build = {
    type = "builtin",
-   modules = {}
+   modules = {
+     restructure = "src/restructure/init.lua",
+     ["restructure.EncodeStream"] = "src/restructure/EncodeStream.lua"
+     ["restructure.DecodeStream"] = "src/restructure/DecodeStream.lua"
+     ["restructure.Number"] = "src/restructure/Number.lua"
+   }
 }

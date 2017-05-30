@@ -1,3 +1,3 @@
 cache = true
-files["spec/"].std = "+busted"
+files["test/"].std = "+busted"
 

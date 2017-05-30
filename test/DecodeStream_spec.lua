@@ -1,0 +1,1 @@
+local DecodeStream = require("restructure").DecodeStream
