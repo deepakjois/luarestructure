@@ -1,68 +1,45 @@
--- try iconv = require 'iconv-lite'
---
--- class DecodeStream
---   constructor: (@buffer) ->
---     @pos = 0
---     @length = @buffer.length
---
---   @TYPES =
---     UInt8: 1
---     UInt16: 2
---     UInt24: 3
---     UInt32: 4
---     Int8: 1
---     Int16: 2
---     Int24: 3
---     Int32: 4
---     Float: 4
---     Double: 8
---
---   for key of Buffer.prototype when key.slice(0, 4) is 'read'
---     do (key) =>
---       bytes = @TYPES[key.replace(/read|[BL]E/g, '')]
---       this::[key] = ->
---         ret = @buffer[key](@pos)
---         @pos += bytes
---         return ret
---
---   readString: (length, encoding = 'ascii') ->
---     switch encoding
---       when 'utf16le', 'ucs2', 'utf8', 'ascii'
---         return @buffer.toString(encoding, @pos, @pos += length)
---
---       when 'utf16be'
---         buf = new Buffer(@readBuffer(length))
---
---         # swap the bytes
---         for i in [0...buf.length - 1] by 2
---           byte = buf[i]
---           buf[i] = buf[i + 1]
---           buf[i + 1] = byte
---
---         return buf.toString('utf16le')
---
---       else
---         buf = @readBuffer length
---         if iconv
---           try
---             return iconv.decode(buf, encoding)
---
---         return buf
---
---   readBuffer: (length) ->
---     return @buffer.slice(@pos, @pos += length)
---
---   readUInt24BE: ->
---     return (@readUInt16BE() << 8) + @readUInt8()
---
---   readUInt24LE: ->
---     return @readUInt16LE() + (@readUInt8() << 16)
---
---   readInt24BE: ->
---     return (@readInt16BE() << 8) + @readUInt8()
---
---   readInt24LE: ->
---     return @readUInt16LE() + (@readInt8() << 16)
---
+local vstruct = require("vstruct")
 
-return {}
+local DecodeStream = {}
+DecodeStream.__index = DecodeStream
+
+function DecodeStream.new(buffer)
+  local d = {}
+  setmetatable(d, DecodeStream)
+  d.buffer = vstruct.cursor(buffer)
+  d.length = #buffer
+  return d
+end
+
+local types = {
+  UInt8 = "u1",
+  UInt16LE = "<u2", UInt16BE = ">u2",
+  UInt24LE = "<u3", UInt24BE = ">u3",
+  UInt32LE = "<u4", UInt32BE = ">u4",
+  Int8 = "i1",
+  Int16LE = "<i2", Int16BE = ">i2",
+  Int24LE = "<i3", Int24BE = ">i3",
+  Int32LE = "<i4", Int32BE = ">i4",
+  FloatLE = "<f4", FloatBE = ">f4",
+  DoubleLE = "<f8", DoubleBE = ">f8"
+}
+
+local function getReaderFunc(fmt)
+  return function(self)
+    return vstruct.readvals(fmt, self.buffer)
+  end
+end
+
+for k,fmt in pairs(types) do
+  DecodeStream["read"..k] = getReaderFunc(fmt)
+end
+
+function DecodeStream:readString(length)
+  return vstruct.readvals("s"..length, self.buffer)
+end
+
+function DecodeStream:readBuffer(length)
+  return vstruct.readvals("s"..length, self.buffer)
+end
+
+return DecodeStream
