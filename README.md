@@ -61,19 +61,19 @@ and whatnot.
 
 The following built-in number types are available:
 
-```javascript
+```lua
 uint8, uint16, uint24, uint32, int8, int16, int24, int32, float, double, fixed16, fixed32
 ```
 
 Numbers are big-endian (network order) by default, but little-endian is supported, too:
 
-```javascript
+```lua
 uint16le, uint24le, uint32le, int16le, int24le, int32le, floatle, doublele, fixed16le, fixed32le
 ```
 
 To avoid ambiguity, big-endian may be used explicitly:
 
-```javascript
+```lue
 uint16be, uint24be, uint32be, int16be, int24be, int32be, floatbe, doublebe, fixed16be, fixed32be
 ```
 
@@ -81,8 +81,8 @@ uint16be, uint24be, uint32be, int16be, int24be, int32be, floatbe, doublebe, fixe
 
 Booleans are encoded as `0` or `1` using one of the above number types.
 
-```javascript
-var bool = new r.Boolean(r.uint32);
+```lua
+local bool = r.Boolean.new(r.uint32)
 ```
 
 ### Reserved
@@ -90,34 +90,34 @@ var bool = new r.Boolean(r.uint32);
 The `Reserved` type simply skips data in a structure, where there are reserved fields.
 Encoding produces zeros.
 
-```javascript
-// 10 reserved uint8s (default is 1)
-var reserved = new r.Reserved(r.uint8, 10);
+```lua
+-- 10 reserved uint8s (default is 1)
+local reserved = r.Reserved.new(r.uint8, 10)
 ```
 
 ### Optional
 
 The `Optional` type only encodes or decodes when given condition is truthy.
 
-```javascript
-// includes field
-var optional = new r.Optional(r.uint8, true);
+```lua
+-- includes field
+local optional = r.Optional.new(r.uint8, true)
 
-// excludes field
-var optional = new r.Optional(r.uint8, false);
+-- excludes field
+local optional = r.Optional.new(r.uint8, false)
 
-// determine whether field is to be included at runtime with a function
-var optional = new r.Optional(r.uint8, function() {
-  return this.flags & 0x50;
-});
+-- determine whether field is to be included at runtime with a function
+local optional = r.Optional.new(r.uint8, function(self) do
+  return bit32.band(self.flags, 0x50)
+end);
 ```
 
 ### Enum
 
 The `Enum` type maps a number to the value at that index in an array.
 
-```javascript
-var color = new r.Enum(r.uint8, ['red', 'orange', 'yellow', 'green', 'blue', 'purple']);
+```lua
+local color = r.Enum.new(r.uint8, {'red', 'orange', 'yellow', 'green', 'blue', 'purple'})
 ```
 
 ### Bitfield
@@ -125,22 +125,22 @@ var color = new r.Enum(r.uint8, ['red', 'orange', 'yellow', 'green', 'blue', 'pu
 The `Bitfield` type maps a number to an object with boolean keys mapping to each bit in that number,
 as defined in an array.
 
-```javascript
-var bitfield = new r.Bitfield(r.uint8, ['Jack', 'Kack', 'Lack', 'Mack', 'Nack', 'Oack', 'Pack', 'Quack']);
-bitfield.decode(stream);
+```lua
+local bitfield = r.Bitfield.new(r.uint8, {'Jack', 'Kack', 'Lack', 'Mack', 'Nack', 'Oack', 'Pack', 'Quack'})
+bitfield.decode(stream)
 
-var result = {
-  Jack: true,
-  Kack: false,
-  Lack: false,
-  Mack: true,
-  Nack: true,
-  Oack: false,
-  Pack: true,
-  Quack: true
-};
+local result = {
+  Jack = true,
+  Kack = false,
+  Lack = false,
+  Mack = true,
+  Nack = true,
+  Oack = false,
+  Pack = true,
+  Quack = true
+}
 
-bitfield.encode(stream, result);
+bitfield.encode(stream, result)
 ```
 
 ### Buffer
@@ -148,15 +148,15 @@ bitfield.encode(stream, result);
 Extracts a slice of the buffer to a Node `Buffer`.  The length can be a constant, or taken from
 a previous field in the parent structure.
 
-```javascript
-// fixed length
-var buf = new r.Buffer(2);
+```lua
+-- fixed length
+local buf = r.Buffer.new(2);
 
-// length from parent structure
-var struct = new r.Struct({
-  bufLen: r.uint8,
-  buf: new r.Buffer('bufLen')
-});
+-- length from parent structure
+local struct = r.Struct.new({
+  { bufLen = r.uint8 },
+  { buf = r.Buffer.new('bufLen') }
+})
 ```
 
 ### String
@@ -165,23 +165,23 @@ A `String` maps a JavaScript string to and from binary encodings.  The length ca
 from a previous field in the parent structure, or encoded using a number type immediately before the string.
 
 Supported encodings include `'ascii'`, `'utf8'`, `'ucs2'`, `'utf16le'`, `'utf16be'`, and if you also install
-[iconv-lite](https://github.com/ashtuchkin/iconv-lite), many other legacy codecs.
+[iconv-lite](https://nonesuch), many other legacy codecs.
 
-```javascript
-// fixed length, ascii encoding by default
-var str = new r.String(2);
+```lua
+-- fixed length, ascii encoding by default
+local str = r.String.new(2)
 
-// length encoded as number before the string, utf8 encoding
-var str = new r.String(r.uint8, 'utf8');
+-- length encoded as number before the string, utf8 encoding
+local str = r.String.new(r.uint8, 'utf8')
 
-// length from parent structure
-var struct = new r.Struct({
-  len: r.uint8,
-  str: new r.String('len', 'utf16be')
-});
+-- length from parent structure
+var struct = r.Struct.new({
+  { len = r.uint8 },
+  { str = r.String.new('len', 'utf16be') }
+})
 
-// null-terminated string (also known as C string)
-var str = new r.String(null, 'utf8')
+-- null-terminated string (also known as C string)
+local str = r.String.new(nil, 'utf8')
 ```
 
 ### Array
@@ -190,24 +190,24 @@ An `Array` maps to and from a JavaScript array containing instances of a sub-typ
 taken from a previous field in the parent structure, encoded using a number type immediately
 before the string, or computed by a function.
 
-```javascript
-// fixed length, containing numbers
-var arr = new r.Array(r.uint16, 2);
+```lua
+-- fixed length, containing numbers
+local arr = r.Array.new(r.uint16, 2)
 
-// length encoded as number before the array containing strings
-var arr = new r.Array(new r.String(10), r.uint8);
+-- length encoded as number before the array containing strings
+local arr = r.Array.new(r.String.new(10), r.uint8);
 
-// length computed by a function
-var arr = new r.Array(r.uint8, function() { return 5 });
+-- length computed by a function
+local arr = new r.Array(r.uint8, function() { return 5 });
 
-// length from parent structure
-var struct = new r.Struct({
-  len: r.uint8,
-  arr: new r.Array(r.uint8, 'len')
-});
+-- length from parent structure
+local struct = r.Struct.new({
+  { len = r.uint8 },
+  { arr = r.Array.new(r.uint8, 'len') }
+})
 
-// treat as amount of bytes instead (may be used in all the above scenarios)
-var arr = new r.Array(r.uint16, 6, 'bytes');
+-- treat as amount of bytes instead (may be used in all the above scenarios)
+local arr = r.Array.new(r.uint16, 6, 'bytes')
 ```
 
 ### LazyArray
@@ -216,17 +216,17 @@ The `LazyArray` type extends from the `Array` type, and is useful for large arra
 It avoids decoding the entire array upfront, and instead only decodes and caches individual items as needed. It only works when
 the elements inside the array have a fixed size.
 
-Instead of returning a JavaScript array, the `LazyArray` type returns a custom object that can be used to access the elements.
+Instead of returning a Lua table array, the `LazyArray` type returns a custom object that can be used to access the elements.
 
-```javascript
-var arr = new r.LazyArray(r.uint16, 2048);
-var res = arr.decode(stream);
+```lua
+local arr = r.LazyArray.new(r.uint16, 2048);
+local res = arr.decode(stream);
 
-// get a single element
-var el = res.get(2);
+-- get a single element
+var el = res.get(2)
 
-// convert to a normal array (decode all elements)
-var array = res.toArray();
+-- convert to a normal array (decode all elements)
+local array = res.toArray()
 ```
 
 ### Struct
@@ -234,11 +234,11 @@ var array = res.toArray();
 A `Struct` maps to and from JavaScript objects, containing keys of various previously discussed types. Sub structures,
 arrays of structures, and pointers to other types (discussed below) are supported.
 
-```javascript
+```lua
 var Person = new r.Struct({
-  name: new r.String(r.uint8, 'utf8'),
-  age: r.uint8
-});
+  { name: r.String.new(r.uint8, 'utf8') },
+  { age: r.uint8 }
+})
 ```
 
 ### VersionedStruct
@@ -247,21 +247,21 @@ A `VersionedStruct` is a `Struct` that has multiple versions. The version is typ
 the beginning of the structure, or as a field in a parent structure. There is an optional `header`
 common to all versions, and separate fields listed for each version number.
 
-```javascript
-// the version is read as a uint8 in this example
-// you could also get the version from a key on the parent struct
-var Person = new r.VersionedStruct(r.uint8, {
-  // optional header common to all versions
-  header: {
-    name: new r.String(r.uint8, 'utf8')
+```lua
+-- the version is read as a uint8 in this example
+-- you could also get the version from a key on the parent struct
+local Person = r.VersionedStruct.new(r.uint8, {
+  -- optional header common to all versions
+  header = {
+    { name = r.String.new(r.uint8, 'utf8') }
   },
-  0: {
-    age: r.uint8
+  0 = {
+    { age: r.uint8 }
   },
-  1: {
-    hairColor: r.Enum(r.uint8, ['black', 'brown', 'blonde'])
+  1 = {
+    { hairColor: r.Enum.new(r.uint8, {'black', 'brown', 'blonde'}) }
   }
-});
+})
 ```
 
 ### Pointer
@@ -286,22 +286,22 @@ The `lazy` option allows lazy decoding of the pointer's value by defining a gett
 This only works when the pointer is contained within a Struct, but can be used to speed up decoding
 quite a bit when not all of the data is needed right away.
 
-```javascript
-var Address = new r.Struct({
-  street: new r.String(r.uint8),
-  zip: new r.String(5)
-});
+```lua
+local Address = new r.Struct.new({
+  { street = r.String.new(r.uint8) },
+  { zip = new r.String(5) }
+})
 
 var Person = new r.Struct({
-  name: new r.String(r.uint8, 'utf8'),
-  age: r.uint8,
-  ptrStart: r.uint8,
-  address: new r.Pointer(r.uint8, Address)
-});
+  { name = new r.String(r.uint8, 'utf8') },
+  { age = r.uint8 },
+  { ptrStart = r.uint8 },
+  { address = r.Pointer.new(r.uint8, Address) }
+})
 ```
 
 If the type of a pointer is set to 'void', it is not decoded and the computed address in the buffer
-is simply returned. To encode a void pointer, create a `new r.VoidPointer(type, value)`.
+is simply returned. To encode a void pointer, create a `r.VoidPointer.new(type, value)`.
 
 ## License
 
