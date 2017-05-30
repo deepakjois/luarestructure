@@ -12,7 +12,8 @@ from Javascript to Lua.]],
    license = "MIT"
 }
 dependencies = {
-   "lua >= 5.2, < 5.4"
+   "lua >= 5.2, < 5.4",
+   "vstruct >= 2.0.1"
 }
 build = {
    type = "builtin",
