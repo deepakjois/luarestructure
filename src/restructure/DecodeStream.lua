@@ -11,7 +11,7 @@ function DecodeStream.new(buffer)
   return d
 end
 
-local types = {
+DecodeStream.types = {
   UInt8 = "u1",
   UInt16LE = "<u2", UInt16BE = ">u2",
   UInt24LE = "<u3", UInt24BE = ">u3",
@@ -30,7 +30,7 @@ local function getReaderFunc(fmt)
   end
 end
 
-for k,fmt in pairs(types) do
+for k,fmt in pairs(DecodeStream.types) do
   DecodeStream["read"..k] = getReaderFunc(fmt)
 end
 
