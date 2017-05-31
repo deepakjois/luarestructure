@@ -18,7 +18,7 @@ exports.DecodeStream = require('restructure.DecodeStream')
 
 local Number = require("restructure.Number")
 
-for k,v in ipairs(Number) do
+for k,v in pairs(Number) do
   exports[k] = v
 end
 
