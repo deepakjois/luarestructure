@@ -35,7 +35,11 @@ for k,fmt in pairs(DecodeStream.types) do
 end
 
 function DecodeStream:readString(length)
-  return vstruct.readvals("s"..length, self.buffer)
+  if length then
+    return vstruct.readvals("s"..length, self.buffer)
+  else
+    return vstruct.readvals("z", self.buffer)
+  end
 end
 
 function DecodeStream:readBuffer(length)
