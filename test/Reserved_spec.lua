@@ -1,0 +1,26 @@
+local r = require("restructure")
+
+describe('Reserved', function()
+  it('should have a default count of 1', function()
+    local reserved = r.Reserved.new(r.uint8)
+    assert.are_equal(1, reserved:size())
+  end)
+
+  it('should allow custom counts and types', function()
+    local reserved = r.Reserved.new(r.uint16,10)
+    assert.are_equal(20, reserved:size())
+  end)
+
+  it('should decode', function()
+    local stream = r.DecodeStream.new(string.char(0,0))
+    local reserved = r.Reserved.new(r.uint16)
+    assert.is_nil(reserved:decode(stream))
+  end)
+
+  it('should encode', function()
+    local stream = r.EncodeStream.new()
+    local reserved = r.Reserved.new(r.uint16)
+    reserved:encode(stream)
+    assert.are_equal(string.char(0,0), stream:getContents())
+  end)
+end)
