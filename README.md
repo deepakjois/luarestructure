@@ -38,10 +38,11 @@ Person.encode(stream, {
   name = 'Devon',
   age = 21
 })
-```
 
 local f = io.open("out.bin", "wb")
 f:write(stream.getContents())
+```
+
 
 ## API
 
