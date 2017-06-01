@@ -33,16 +33,15 @@ Person.decode(stream) -- returns an object with the fields defined above
 -- encode a person from an object
 -- pipe the stream to a destination, such as a file
 local stream = r.EncodeStream.new()
-stream.pipe(io.open('out.bin', 'w'))
 
 Person.encode(stream, {
   name = 'Devon',
   age = 21
 })
-
-stream.end()
 ```
 
+local f = io.open("out.bin", "wb")
+f:write(stream.getContents())
 
 ## API
 
@@ -292,8 +291,8 @@ local Address = new r.Struct.new({
   { zip = new r.String(5) }
 })
 
-var Person = new r.Struct({
-  { name = new r.String(r.uint8, 'utf8') },
+local Person = new r.Struct({
+  { name = r.String.new(r.uint8, 'utf8') },
   { age = r.uint8 },
   { ptrStart = r.uint8 },
   { address = r.Pointer.new(r.uint8, Address) }
