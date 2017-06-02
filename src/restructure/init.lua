@@ -11,7 +11,7 @@ exports.Enum = require('restructure.Enum')
 exports.Optional = require('restructure.Optional')
 exports.Reserved = require('restructure.Reserved')
 exports.String = require('restructure.String')
--- exports.Struct          = require './src/Struct'
+exports.Struct = require('restructure.Struct')
 -- exports.VersionedStruct = require './src/VersionedStruct'
 
 local Number = require("restructure.Number")
