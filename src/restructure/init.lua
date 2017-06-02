@@ -2,7 +2,7 @@ local exports = {}
 
 exports.EncodeStream = require ('restructure.EncodeStream')
 exports.DecodeStream = require('restructure.DecodeStream')
--- exports.Array           = require './src/Array'
+exports.Array = require('restructure.Array')
 -- exports.LazyArray       = require './src/LazyArray'
 exports.Bitfield = require('restructure.Bitfield')
 exports.Boolean = require('restructure.Boolean')
