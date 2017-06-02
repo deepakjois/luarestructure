@@ -1,6 +1,6 @@
 local NumberT = require('restructure.Number').Number
 local utils = require('restructure.utils')
---
+
 local StringT = {}
 StringT.__index = StringT
 
