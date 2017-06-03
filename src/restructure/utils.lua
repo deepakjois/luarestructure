@@ -1,6 +1,6 @@
 local NumberT = require('restructure.Number').Number
 
-local function instanceOf (subject, super)
+local function instanceOf(subject, super)
 	super = tostring(super)
 	local mt = getmetatable(subject)
 
@@ -26,10 +26,22 @@ local function resolveLength(length, stream, parent)
   return res
 end
 
+local PropertyDescriptor = {}
+PropertyDescriptor.__index = PropertyDescriptor
+
+function PropertyDescriptor.new(opts)
+  local p = setmetatable({}, PropertyDescriptor)
+  opts = opts or {}
+  for k,v in pairs(opts) do
+    opts[k] = v
+  end
+  return p
+end
 
 local exports = {
   instanceOf = instanceOf,
-  resolveLength = resolveLength
+  resolveLength = resolveLength,
+  PropertyDescriptor = PropertyDescriptor
 }
 
 return exports

@@ -12,15 +12,17 @@ exports.Optional = require('restructure.Optional')
 exports.Reserved = require('restructure.Reserved')
 exports.String = require('restructure.String')
 exports.Struct = require('restructure.Struct')
--- exports.VersionedStruct = require './src/VersionedStruct'
+exports.VersionedStruct = require('restructure.VersionedStruct')
 
 local Number = require("restructure.Number")
+local Pointer = require("restructure.Pointer")
 
 for k,v in pairs(Number) do
   exports[k] = v
 end
 
--- for key, val of require './src/Pointer'
---   exports[key] = val
+for k,v in pairs(Pointer) do
+  exports[k] = v
+end
 
 return exports
