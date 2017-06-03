@@ -110,24 +110,25 @@ describe('Struct', function()
       struct:encode(stream, {name = 'devon', age = 21})
       assert.are_equal("\x05devon\x15", stream:getContents())
     end)
+
+    it('should encode pointer data after structure', function()
+      local stream = r.EncodeStream.new()
+      local struct = r.Struct.new({
+        { name = StringT.new(r.uint8) },
+        { age = r.uint8 },
+        { ptr = r.Pointer.new(r.uint8, StringT.new(r.uint8)) }
+      })
+
+      struct:encode(stream, {
+        name = 'devon',
+        age = 21,
+        ptr = 'hello'
+      })
+
+      assert.are_equal("\x05devon\x15\x08\x05hello", stream:getContents())
+    end)
+
   end)
 end)
 
-    -- it('should encode pointer data after structure', function()
-    --   local stream = r.EncodeStream.new()
-    --   stream.pipe concat (buf) function()
-    --     buf.should.deep.equal "\x05devon\x15\x08\x05hello"
-    --     done()
-    --
-    --   local struct = r.Struct.new({
-    --     name: StringT.new(r.uint8)
-    --     age: r.uint8
-    --     ptr: new Pointer r.uint8, StringT.new(r.uint8)
-    --
-    --   struct.encode stream,
-    --     name: 'devon'
-    --     age: 21
-    --     ptr: 'hello'
-    --
-    --   stream.end()
 

@@ -391,31 +391,30 @@ describe('VersionedStruct', function()
       assert.are_equal("\x00\x15\x01\x05devon\x01\x15\x01\x0adevon 👍\x00", stream:getContents())
     end)
 
-    -- it('should encode pointer data after structure', function()
-    --   local struct = VersionedStruct.new(r.uint8,{
-    --     [0] = {
-    --       { name = r.String.new(r.uint8, 'ascii') },
-    --       { age = r.uint8 }
-    --     },
-    --     [1] = {
-    --       { name: r.String.new(r.uint8, 'utf8') },
-    --       { age: r.uint8 },
-    --       { ptr = new Pointer r.uint8, r.String.new(r.uint8) }
-    --     }
-    --   })
-    --
-    --   local stream = r.EncodeStream.new()
-    --   stream.pipe concat (buf) function()
-    --     buf.should.deep.equal "\x01\x05devon\x15\x09\x05hello", 'utf8'
-    --     done()
-    --
-    --   struct:encode stream,
-    --     version: 1
-    --     name: 'devon'
-    --     age: 21
-    --     ptr: 'hello'
-    --
-    --   stream.end()
+    it('should encode pointer data after structure', function()
+      local struct = VersionedStruct.new(r.uint8,{
+        [0] = {
+          { name = r.String.new(r.uint8, 'ascii') },
+          { age = r.uint8 }
+        },
+        [1] = {
+          { name = r.String.new(r.uint8, 'utf8') },
+          { age = r.uint8 },
+          { ptr = r.Pointer.new(r.uint8, r.String.new(r.uint8)) }
+        }
+      })
+
+      local stream = r.EncodeStream.new()
+
+      struct:encode(stream, {
+        version = 1,
+        name = 'devon',
+        age = 21,
+        ptr = 'hello'
+      })
+
+      assert.are_equal("\x01\x05devon\x15\x09\x05hello", stream:getContents())
+    end)
 
     it('should support preEncode hook', function()
       local struct = VersionedStruct.new(r.uint8, {
