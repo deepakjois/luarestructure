@@ -59,7 +59,7 @@ describe('Optional', function()
       assert.are_equal(1, optional:size())
     end)
   end)
-  --
+
   describe('encode', function()
     it('should not encode when condition is falsy', function()
       local stream = r.EncodeStream.new()
