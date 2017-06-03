@@ -97,6 +97,7 @@ function Pointer:size(val, ctx)
 
 
   if val and ctx then
+    if not ctx.pointerSize then ctx.pointerSize = 0 end
     ctx.pointerSize = ctx.pointerSize + type:size(val, parent)
   end
 

@@ -87,7 +87,7 @@ function ArrayT:encode(stream, array, parent)
 
   if utils.instanceOf(self.length, NumberT) then
     local i = 1
-    while i < #ctx.pointers do
+    while i <= #ctx.pointers do
       local ptr = ctx.pointers[i]
       ptr.type:encode(stream, ptr.val)
       i = i + 1
