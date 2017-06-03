@@ -19,8 +19,21 @@ build = {
    type = "builtin",
    modules = {
      restructure = "src/restructure/init.lua",
-     ["restructure.EncodeStream"] = "src/restructure/EncodeStream.lua"
-     ["restructure.DecodeStream"] = "src/restructure/DecodeStream.lua"
-     ["restructure.Number"] = "src/restructure/Number.lua"
+     ["restructure.Array"] = "src/restructure/Array.lua",
+     ["restructure.Bitfield"] = "src/restructure/Bitfield.lua",
+     ["restructure.Boolean"] = "src/restructure/Boolean.lua",
+     ["restructure.Buffer"] = "src/restructure/Buffer.lua",
+     ["restructure.DecodeStream"] = "src/restructure/DecodeStream.lua",
+     ["restructure.EncodeStream"] = "src/restructure/EncodeStream.lua",
+     ["restructure.Enum"] = "src/restructure/Enum.lua",
+     ["restructure.LazyArray"] = "src/restructure/LazyArray.lua",
+     ["restructure.Number"] = "src/restructure/Number.lua",
+     ["restructure.Optional"] = "src/restructure/Optional.lua",
+     ["restructure.Pointer"] = "src/restructure/Pointer.lua",
+     ["restructure.Reserved"] = "src/restructure/Reserved.lua",
+     ["restructure.String"] = "src/restructure/String.lua",
+     ["restructure.Struct"] = "src/restructure/Struct.lua",
+     ["restructure.VersionedStruct"] = "src/restructure/VersionedStruct.lua",
+     ["restructure.utils"] = "src/restructure/utils.lua"
    }
 }
