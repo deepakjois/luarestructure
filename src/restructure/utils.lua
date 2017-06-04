@@ -33,7 +33,7 @@ function PropertyDescriptor.new(opts)
   local p = setmetatable({}, PropertyDescriptor)
   opts = opts or {}
   for k,v in pairs(opts) do
-    opts[k] = v
+    p[k] = v
   end
   return p
 end

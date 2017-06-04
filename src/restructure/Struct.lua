@@ -47,7 +47,17 @@ function Struct._parseFields(stream, res, fields)
 
     if val ~= nil then
       if utils.instanceOf(val, utils.PropertyDescriptor) then
-        error("NOT IMPLEMENTED")
+        -- FIXME: ugly hack to implement Javascript like lazy getter
+        -- It’s probably much better to rethink this to make it more
+        -- Lua-ish
+        local mt = getmetatable(res).__index
+        local lazygetter = {
+          __index =  function(_, k)
+
+              if k == key then return val.get() end
+            end}
+        setmetatable(mt, lazygetter)
+        -- error("NOT IMPLEMENTED")
       else
         res[key] = val
       end

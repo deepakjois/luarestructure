@@ -47,17 +47,17 @@ describe('Pointer', function()
       assert.are_equal(4,pointer:decode(stream, { _startOffset = 0 }))
     end)
 
-    -- it('should support decoding pointers lazily', function()
-    --   local stream = r.DecodeStream.new(string.char(1, 53))
-    --   struct = new r.Struct.new({
-    --     { ptr = r.Pointer.new(r.uint8, r.uint8, lazy: yes) }
-    --   })
-    --
-    --   res = struct.decode(stream)
-    --   Object.getOwnPropertyDescriptor(res, 'ptr').get.should.be.a('function')
-    --   Object.getOwnPropertyDescriptor(res, 'ptr').enumerable.should.equal(true)
-    --   assert.are_equal(53,res.ptr)
-    -- end)
+    it('should support decoding pointers lazily #debug', function()
+      local stream = r.DecodeStream.new(string.char(1, 53))
+      local struct = r.Struct.new({
+        { ptr = r.Pointer.new(r.uint8, r.uint8, {lazy = true}) }
+      })
+
+      local res = struct:decode(stream)
+      -- Object.getOwnPropertyDescriptor(res, 'ptr').get.should.be.a('function')
+      -- Object.getOwnPropertyDescriptor(res, 'ptr').enumerable.should.equal(true)
+      assert.are_equal(53,res.ptr)
+    end)
   end)
 
   describe('size', function()
