@@ -149,7 +149,6 @@ function Pointer:encode(stream, val, ctx)
   ctx.pointerOffset = ctx.pointerOffset + type:size(val, parent)
 end
 
-
 function VoidPointer.new(type, value)
   local v = setmetatable({}, VoidPointer)
   v.type = type
