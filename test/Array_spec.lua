@@ -1,5 +1,4 @@
 local r = require('restructure')
-local spt = require("serpent")
 local ArrayT = r.Array
 
 describe('Array', function()
@@ -109,7 +108,6 @@ describe('Array', function()
       local stream = r.EncodeStream.new()
       local array = ArrayT.new(r.Pointer.new(r.uint8, r.uint8), r.uint8)
       array:encode(stream, {1, 2, 3, 4})
-      local s = stream:getContents()
       assert.are.same((string.char(4,5, 6, 7, 8, 1, 2, 3, 4)), stream:getContents())
     end)
   end)
