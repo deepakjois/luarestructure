@@ -107,8 +107,8 @@ local optional = r.Optional.new(r.uint8, true)
 local optional = r.Optional.new(r.uint8, false)
 
 -- determine whether field is to be included at runtime with a function
-local optional = r.Optional.new(r.uint8, function(self) do
-  return bit32.band(self.flags, 0x50)
+local optional = r.Optional.new(r.uint8, function(res) do
+  return bit32.band(res.flags, 0x50)
 end);
 ```
 
@@ -140,12 +140,12 @@ local result = {
   Quack = true
 }
 
-bitfield.encode(stream, result)
+bitfield:encode(stream, result)
 ```
 
 ### Buffer
 
-Extracts a slice of the buffer to a Node `Buffer`.  The length can be a constant, or taken from
+Extracts a slice of the buffer to a Lua string.  The length can be a constant, or taken from
 a previous field in the parent structure.
 
 ```lua
@@ -161,11 +161,13 @@ local struct = r.Struct.new({
 
 ### String
 
-A `String` maps a JavaScript string to and from binary encodings.  The length can be a constant, taken
+A `String` maps a binary byte stream to a Lua string.  The length can be a constant, taken
 from a previous field in the parent structure, or encoded using a number type immediately before the string.
 
-Supported encodings include `'ascii'`, `'utf8'`, `'ucs2'`, `'utf16le'`, `'utf16be'`, and if you also install
-[iconv-lite](https://nonesuch), many other legacy codecs.
+In order to stay compatible with the original Javascript API, the constructor allows an additional
+argument to specify the encodings (for e.g. `'ascii'`, `'utf8'`, `'ucs2'`, `'utf16le'`, `'utf16be'` etc).
+However, this is only for informational purposes, because strings in Lua are just a series of bytes. The consumer
+code can use this information to do additional processing (before encoding or after decoding) if desired.
 
 ```lua
 -- fixed length, ascii encoding by default
@@ -231,8 +233,16 @@ local array = res.toArray()
 
 ### Struct
 
-A `Struct` maps to and from JavaScript objects, containing keys of various previously discussed types. Sub structures,
+A `Struct` maps to and from Lua tables, containing keys of various previously discussed types. Sub structures,
 arrays of structures, and pointers to other types (discussed below) are supported.
+
+_NOTE: The original Javascript API relied on the fact that keys are iterated in [order of creation/insertion][spec].
+However, Lua makes no guarantees about order of iteration of keys._
+
+_This means that the first argument to the `Struct` class is a table of tables, ensuring that order of keys
+is preserved. Note the change in the examples below, and in the next section._
+
+[spec]: http://www.ecma-international.org/ecma-262/6.0/#sec-ordinary-object-internal-methods-and-internal-slots-ownpropertykeys
 
 ```lua
 var Person = new r.Struct({
@@ -278,9 +288,9 @@ The `type` option has these possible values:
 The `relativeTo` option specifies that the encoded offset is relative to a field on the containing structure.
 By default, pointers are relative to the start of the containing structure (`local`).
 
-The `allowNull` option lets you specify whether zero offsets are allowed or should produce `null`. This is
+The `allowNull` option lets you specify whether zero offsets are allowed or should produce `nil`. This is
 set to `true` by default. The `nullValue` option is related, and lets you override the encoded value that
-represents `null`. By default, the `nullValue` is zero.
+represents `nil`. By default, the `nullValue` is zero.
 
 The `lazy` option allows lazy decoding of the pointer's value by defining a getter on the parent object.
 This only works when the pointer is contained within a Struct, but can be used to speed up decoding
