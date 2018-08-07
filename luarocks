@@ -1,0 +1,3 @@
+#!/bin/sh
+
+LUAROCKS_SYSCONFDIR='/home/deepak/code/lua53/etc/luarocks' LUA_INIT='package.path="/home/deepak/code/lua53/share/lua/5.3/?.lua;/home/deepak/code/lua53/share/lua/5.3/?/init.lua;./?.lua;/home/deepak/.luarocks/share/lua/5.3/?.lua;/home/deepak/.luarocks/share/lua/5.3/?/init.lua";package.cpath="/home/deepak/code/lua53/lib/lua/5.3/?.so;/home/deepak/code/lua53/lib/lua/5.3/loadall.so;./?.so;/home/deepak/.luarocks/lib/lua/5.3/?.so"' exec '/home/deepak/code/lua53/bin/lua' '/home/deepak/code/lua53/bin/luarocks' --project-tree /home/deepak/code/luarestructure/lua_modules "$@"
